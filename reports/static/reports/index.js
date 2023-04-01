@@ -9,8 +9,11 @@ $(() => {
       showBorders: true,
       showRowGrandTotals: false,
       fieldChooser: {
-        enabled: false,
+        enabled: true,
       },
+      export: {
+        enabled:true
+        },
       onCellClick(e) {
         if (e.area === 'data') {
           const pivotGridDataSource = e.component.getDataSource();
@@ -23,6 +26,24 @@ $(() => {
           salesPopup.show();
         }
       },
+      onExporting: function(e) { 
+        var workbook = new ExcelJS.Workbook(); 
+        var worksheet = workbook.addWorksheet('Main sheet'); 
+        DevExpress.excelExporter.exportPivotGrid({ 
+            worksheet: worksheet, 
+            component: e.component,
+            customizeCell: function(options) {
+                var excelCell = options;
+                excelCell.font = { name: 'Arial', size: 12 };
+                excelCell.alignment = { horizontal: 'left' };
+            } 
+        }).then(function() {
+            workbook.xlsx.writeBuffer().then(function(buffer) { 
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'PivotGrid.xlsx'); 
+            }); 
+        }); 
+        e.cancel = true; 
+    },
       dataSource: {
         fields: [{
           caption: 'primary_label',
@@ -51,13 +72,14 @@ $(() => {
     });
   
     const salesPopup = $('#sales-popup').dxPopup({
-      width: 1400,
+      width: 1360,
       height: 600,
+      //resizeEnabled:true,
       contentTemplate(contentElement) {
         $('<div />')
           .addClass('drill-down')
           .dxDataGrid({
-            width: 1860,
+            width: 1260,
             height: 500,
             scrolling: {
               mode: 'virtual',
