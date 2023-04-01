@@ -7,6 +7,7 @@ $(() => {
       allowFiltering: true,
       allowExpandAll: true,
       showBorders: true,
+      showRowGrandTotals: false,
       fieldChooser: {
         enabled: false,
       },
@@ -33,11 +34,11 @@ $(() => {
           dataField: 'secondary_label',
           width: 150,
           area: 'row',
-        }, /*{
-          dataField: 'date',
+        }, {
+          dataField: 'period',
           dataType: 'date',
           area: 'column',
-        }, */{
+        }, {
           caption: 'value_usd',
           dataField: 'value_usd',
           dataType: 'number',
@@ -50,15 +51,18 @@ $(() => {
     });
   
     const salesPopup = $('#sales-popup').dxPopup({
-      width: 600,
-      height: 400,
+      width: 1400,
+      height: 600,
       contentTemplate(contentElement) {
         $('<div />')
           .addClass('drill-down')
           .dxDataGrid({
-            width: 560,
-            height: 300,
-            columns: ['region', 'city', 'amount', 'date'],
+            width: 1860,
+            height: 500,
+            scrolling: {
+              mode: 'virtual',
+            },
+            columns: ['period', 'primary_label', 'secondary_label', 'account','base_token_address','value_eth','value_usd'],
           })
           .appendTo(contentElement);
       },
