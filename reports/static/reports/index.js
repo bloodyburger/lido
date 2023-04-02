@@ -8,6 +8,7 @@ $(() => {
       allowExpandAll: true,
       showBorders: true,
       showRowGrandTotals: false,
+      showColumnGrandTotals: false,
       fieldChooser: {
         enabled: true,
       },
@@ -45,14 +46,33 @@ $(() => {
         e.cancel = true; 
     },
       dataSource: {
-        fields: [{
+        fields: [
+          /*{
           caption: 'primary_label',
           width: 120,
           dataField: 'primary_label',
           area: 'row',
-        }, {
+        }, */{
           caption: 'secondary_label',
           dataField: 'secondary_label',
+          width: 150,
+          area: 'row',
+        },
+        {
+          caption: 'account',
+          dataField: 'account',
+          width: 150,
+          area: 'row',
+        },
+        {
+          caption: 'category',
+          dataField: 'category',
+          width: 150,
+          area: 'row',
+        },
+        {
+          caption: 'subcategory',
+          dataField: 'subcategory',
           width: 150,
           area: 'row',
         }, {
@@ -60,13 +80,26 @@ $(() => {
           dataType: 'date',
           area: 'column',
         }, {
-          caption: 'value_usd',
-          dataField: 'value_usd',
+          caption: 'value_eth',
+          dataField: 'value_eth',
           dataType: 'number',
           summaryType: 'sum',
           format: 'currency',
           area: 'data',
-        }],
+        },
+      // Filters
+        {
+          area: 'filter', 
+          dataField: 'secondary_label',
+          filterType: 'include',
+          filterValues: ['1.1. Staked Assets', '3.2. Operating Performance']
+      },
+      {
+        area: 'filter', 
+        dataField: 'account',
+        filterType: 'include',
+        filterValues: ['3.2.1. Net Revenue', '3.2.2. Cost of Revenue','1.1.1. Staked ETH']
+    }],
         store: sales,
       },
     });
@@ -84,7 +117,28 @@ $(() => {
             scrolling: {
               mode: 'virtual',
             },
-            columns: ['period', 'primary_label', 'secondary_label', 'account','base_token_address','value_eth','value_usd'],
+            export: {
+              enabled:true
+              },
+              onExporting: function(e) { 
+                var workbook = new ExcelJS.Workbook(); 
+                var worksheet = workbook.addWorksheet('Main sheet'); 
+                DevExpress.excelExporter.exportPivotGrid({ 
+                    worksheet: worksheet, 
+                    component: e.component,
+                    customizeCell: function(options) {
+                        var excelCell = options;
+                        excelCell.font = { name: 'Arial', size: 12 };
+                        excelCell.alignment = { horizontal: 'left' };
+                    } 
+                }).then(function() {
+                    workbook.xlsx.writeBuffer().then(function(buffer) { 
+                        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'PivotGrid.xlsx'); 
+                    }); 
+                }); 
+                e.cancel = true; 
+            },
+            columns: ['period', 'primary_label', 'secondary_label', 'account','base_token_address','value_eth'],
           })
           .appendTo(contentElement);
       },
@@ -98,6 +152,7 @@ $(() => {
           .dxDataGrid('instance')
           .updateDimensions();
       },
+          
     }).dxPopup('instance');
   });
   
