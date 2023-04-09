@@ -1,4 +1,26 @@
-$(() => {
+{% extends 'reports/base.html' %}
+
+{% block title %} Report Name {% endblock %}
+
+{% block content %}
+<!--
+<div class="container-fluid">
+  <div class="row"><div class="col">
+    <ul class="list-group">
+      {% for r in report_list %}
+      <li class="list-group-item"><a class="link-offset-2 link-underline link-underline-opacity-0" href={% url 'reports' report_id=r.id %}>{{ r.report_name }}</a></a></li>
+      {% endfor %}
+    </ul>
+
+  </div><div class="col"></div><div class="col"></div></div>
+</div>-->
+<div class="demo-container">
+  <div id="sales"></div>
+  <div id="sales-popup"></div>
+</div>
+
+<script>
+  $(() => {
     let drillDownDataSource = {};
   
     $('#sales').dxPivotGrid({
@@ -57,24 +79,28 @@ $(() => {
           dataField: 'secondary_label',
           width: 150,
           area: 'row',
+          expanded: true
         },
         {
           caption: 'account',
           dataField: 'account',
           width: 150,
           area: 'row',
+          expanded: true
         },
         {
           caption: 'category',
           dataField: 'category',
           width: 150,
           area: 'row',
+          expanded: true
         },
         {
           caption: 'subcategory',
           dataField: 'subcategory',
           width: 150,
           area: 'row',
+          expanded: true
         }, {
           dataField: 'period',
           dataType: 'date',
@@ -84,7 +110,11 @@ $(() => {
           dataField: 'value_eth',
           dataType: 'number',
           summaryType: 'sum',
-          format: 'currency',
+          //format: 'Number',
+          format: {
+                type: "fixedPoint",
+                precision: 0
+            },
           area: 'data',
         },
       // Filters
@@ -154,3 +184,5 @@ $(() => {
     }).dxPopup('instance');
   });
   
+</script>
+{% endblock %}

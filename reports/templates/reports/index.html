@@ -1,34 +1,21 @@
-<!DOCTYPE html>
-{% load static %}
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>Lido Reports</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.1.1/exceljs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.2.3/css/dx.light.css" />
-    <script src="https://cdn3.devexpress.com/jslib/22.2.3/js/dx.all.js"></script>
-    <script src="{% static 'reports/data.js' %}"></script>
-    <!--<link rel="stylesheet" type="text/css" href="styles.css" />-->
-    <script src="{% static 'reports/index.js' %}"></script>
-    <style>
-      .report-header{
-        font-size: 15px;
-        font-weight: 300;
-        text-decoration: underline;
-      }
-    </style>
-  </head>
-  <body class="dx-viewport">
-    <span class="report-header">Lido Protocol ETH Staked and network rewards</span>
-    <div class="demo-container">
-      <div id="sales"></div>
-      <div id="sales-popup"></div>
-    </div>
-  </body>
-</html>
+{% extends 'reports/base.html' %}
+
+{% block title %} Lido Reports {% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row"><div class="col">
+    <ul class="list-group">
+      {% for r in report_list %}
+      <li class="list-group-item"><a class="link-offset-2 link-underline link-underline-opacity-0" href={% url 'reports' report_id=r.id %}>{{ r.report_name }}</a></a></li>
+      {% endfor %}
+    </ul>
+
+  </div><div class="col"></div><div class="col"></div></div>
+</div>
+<!--
+<div class="demo-container">
+  <div id="sales"></div>
+  <div id="sales-popup"></div>
+</div>-->
+{% endblock %}
