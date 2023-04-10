@@ -36,6 +36,7 @@ class ReportsConfig(models.Model):
 	show_category = models.CharField(max_length=3,choices=BOOL_CHOICES, blank=True,default=None)
 	show_subcategory = models.CharField(max_length=3,choices=BOOL_CHOICES, blank=True,default=None)
 	base_token = models.TextField(blank=True,default=None)
+	value_col = models.TextField()
 		# renames the instances of the model
 		# with their title name
 	def __str__(self):

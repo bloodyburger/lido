@@ -1,5 +1,5 @@
 {% extends 'reports/base.html' %}
-
+{% load static %}
 {% block title %} Report Name {% endblock %}
 
 {% block content %}
@@ -20,9 +20,11 @@
 </div>
 
 <script>
+  const sales_data = {{ final_data|safe }};
+  
   $(() => {
     let drillDownDataSource = {};
-  
+    //console.log(sales_data);
     $('#sales').dxPivotGrid({
       allowSortingBySummary: true,
       allowSorting: true,
@@ -69,45 +71,22 @@
     },
       dataSource: {
         fields: [
-          /*{
-          caption: 'primary_label',
-          width: 120,
-          dataField: 'primary_label',
-          area: 'row',
-        }, */{
-          caption: 'secondary_label',
-          dataField: 'secondary_label',
-          width: 150,
-          area: 'row',
-          expanded: true
-        },
-        {
-          caption: 'account',
-          dataField: 'account',
-          width: 150,
-          area: 'row',
-          expanded: true
-        },
-        {
-          caption: 'category',
-          dataField: 'category',
-          width: 150,
-          area: 'row',
-          expanded: true
-        },
-        {
-          caption: 'subcategory',
-          dataField: 'subcategory',
-          width: 150,
-          area: 'row',
-          expanded: true
-        }, {
-          dataField: 'period',
+        {% for f in field_list %}  
+        {% templatetag openbrace %}
+          'caption': '{{f}}',
+          'dataField': '{{f}}',
+          'width': 150,
+          'area': 'row',
+          'expanded': true
+          {% templatetag closebrace %},
+        {% endfor %}
+         {
+          dataField: 'PERIOD',
           dataType: 'date',
           area: 'column',
         }, {
-          caption: 'value_eth',
-          dataField: 'value_eth',
+          caption: 'VALUE_BASE_TOKEN',
+          dataField: '{{value_col}}',
           dataType: 'number',
           summaryType: 'sum',
           //format: 'Number',
@@ -120,17 +99,17 @@
       // Filters
         {
           area: 'filter', 
-          dataField: 'secondary_label',
+          dataField: 'SECONDARY_LABEL',
           filterType: 'include',
           filterValues: ['1.1. Staked Assets', '3.2. Operating Performance']
       },
       {
         area: 'filter', 
-        dataField: 'account',
+        dataField: 'ACCOUNT',
         filterType: 'include',
         filterValues: ['3.2.1. Net Revenue', '3.2.2. Cost of Revenue','1.1.1. Staked ETH']
     }],
-        store: sales,
+        store: sales_data,
       },
     });
   
@@ -166,7 +145,7 @@
                 });
                 e.cancel = true;
               },
-            columns: ['period', 'primary_label', 'secondary_label', 'account','base_token_address','value_eth'],
+            columns: ['PERIOD', 'PRIMARY_LABEL', 'SECONDARY_LABEL', 'ACCOUNT','BASE_TOKEN_ADDRESS','VALUE_BASE_TOKEN'],
           })
           .appendTo(contentElement);
       },
