@@ -20,6 +20,9 @@ def index(request):
     #df = cur.fetch_pandas_all()
     #df.to_csv('lido_snowflake.csv', header=True)
     reports = Reports.objects.all()
+    string = 'a,b'
+    result = ",".join(["'"+x+"'" for x in string.split(",")])
+    print(result)
     return render(request, 'reports/index.html', context={'report_list': reports})
 
 
@@ -49,11 +52,11 @@ def generate_report(request, report_id):
         sf_filter = sf_filter
     #print(json.dumps(field_list, cls=UnquotedEncoder))
     #field_list = ['col1','col2']
-    print(make_query())
-    return render(request, 'reports/report.html', context={'field_list': field_list, 'final_data': make_query(),'value_col':value_col})
+    #print(make_query())
+    return render(request, 'reports/report.html', context={'field_list': field_list, 'final_data': make_query(rc),'rc':rc})
 
 
-def make_query():
+def make_query(rc):
     conn = snowflake.connector.connect(
         user='READ_ONLY_LIDO',
         password='9dC8v5y9rQ6XqX',
@@ -63,6 +66,17 @@ def make_query():
         schema='PUBLIC'
     )
     cur = conn.cursor()
-    cur.execute('select * from LIDO_DEV')
+    query_filters = "WHERE "
+    if len(rc.primary_filters) > 1:
+        query_filters = query_filters + "PRIMARY_LABEL in ({}) AND ".format(",".join(["'"+x+"'" for x in rc.primary_filters.split(",")]))
+    if len(rc.secondary_filters) > 1:
+        query_filters = query_filters + "SECONDARY_LABEL in ({}) AND ".format(",".join(["'"+x+"'" for x in rc.secondary_filters.split(",")]))
+    if len(rc.account_filters) > 1:
+        query_filters = query_filters + "ACCOUNT in ({}) AND ".format(",".join(["'"+x+"'" for x in rc.account_filters.split(",")]))        
+    
+    query_filters = query_filters + " 1=1 "
+    query_string = "select * from {} {} ".format(rc.source_table,query_filters)
+    print("Query string is {}".format(query_string))
+    cur.execute(query_string)
     df = cur.fetch_pandas_all()
     return df.to_json(orient='records')

@@ -1,6 +1,6 @@
 {% extends 'reports/base.html' %}
 {% load static %}
-{% block title %} Report Name {% endblock %}
+{% block title %} {{rc.report.report_name}} {% endblock %}
 
 {% block content %}
 <!--
@@ -15,6 +15,8 @@
   </div><div class="col"></div><div class="col"></div></div>
 </div>-->
 <div class="demo-container">
+  <h4>{{rc.report.report_name}}</h4>
+  <h6>{{rc.report.subheading}}</h6>
   <div id="sales"></div>
   <div id="sales-popup"></div>
 </div>
@@ -31,10 +33,10 @@
       allowFiltering: true,
       allowExpandAll: true,
       showBorders: true,
-      showRowGrandTotals: false,
-      showColumnGrandTotals: false,
+      showRowGrandTotals: {{rc.row_total|lower}},
+      showColumnGrandTotals: {{rc.column_total|lower}},
       fieldChooser: {
-        enabled: true,
+        enabled: {{rc.field_chooser|lower}},
       },
       export: {
         enabled:true
@@ -86,29 +88,19 @@
           area: 'column',
         }, {
           caption: 'VALUE_BASE_TOKEN',
-          dataField: '{{value_col}}',
+          dataField: '{{rc.value_col}}',
           dataType: 'number',
           summaryType: 'sum',
           //format: 'Number',
           format: {
-                type: "fixedPoint",
+                type: "{{rc.show_as_dollar}}",//fixedPoint
                 precision: 0
             },
           area: 'data',
+          //runningTotal: 'row',
+          //allowCrossGroupCalculation: true,
         },
-      // Filters
-        {
-          area: 'filter', 
-          dataField: 'SECONDARY_LABEL',
-          filterType: 'include',
-          filterValues: ['1.1. Staked Assets', '3.2. Operating Performance']
-      },
-      {
-        area: 'filter', 
-        dataField: 'ACCOUNT',
-        filterType: 'include',
-        filterValues: ['3.2.1. Net Revenue', '3.2.2. Cost of Revenue','1.1.1. Staked ETH']
-    }],
+      ],
         store: sales_data,
       },
     });
