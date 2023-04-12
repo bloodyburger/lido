@@ -47,6 +47,8 @@ def generate_report(request, report_id):
         field_list.append('CATEGORY')
     if rc.show_subcategory == "YES":
         field_list.append('SUBCATEGORY')
+    if rc.show_token == "YES":
+        field_list.append('TOKEN_SYMBOL')    
 
     if len(rc.primary_filters) > 5 :
         sf_filter = sf_filter
@@ -57,6 +59,14 @@ def generate_report(request, report_id):
 
 
 def make_query(rc):
+    token_symbol = {'0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2':'ETH',
+                    '0x6b175474e89094c44da98b954eedeac495271d0f':'DAI',
+                    '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0':'MATIC',
+                    '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48':'USDC',
+                    '0xdac17f958d2ee523a2206206994597c13d831ec7':'USDT',
+                    '7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj':'SOL',
+                    '0x5a98fcbea516cf06857215779fd812ca3bef1b32':'LDO'}
+    
     conn = snowflake.connector.connect(
         user='READ_ONLY_LIDO',
         password='9dC8v5y9rQ6XqX',
@@ -79,4 +89,8 @@ def make_query(rc):
     print("Query string is {}".format(query_string))
     cur.execute(query_string)
     df = cur.fetch_pandas_all()
+    df['TOKEN_SYMBOL'] = df['BASE_TOKEN_ADDRESS'].map(token_symbol)
+    if rc.filter_known_tokens:
+        df = df[df['TOKEN_SYMBOL'].isin(['ETH','DAI','MATIC','USDC','USDT','SOL','LDO'])]
+    df.to_csv('lido.csv',header=True)
     return df.to_json(orient='records')

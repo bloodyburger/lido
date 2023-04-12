@@ -54,6 +54,7 @@ class ReportsConfig(models.Model):
 	show_account = models.CharField(max_length=3,choices=YN_CHOICES, blank=True,default=None)
 	show_category = models.CharField(max_length=3,choices=YN_CHOICES, blank=True,default=None)
 	show_subcategory = models.CharField(max_length=3,choices=YN_CHOICES, blank=True,default=None)
+	show_token = models.CharField(max_length=3,choices=YN_CHOICES)
 	base_token = models.TextField(blank=True,default=None)
 	value_col = models.TextField()
 	field_chooser = models.BooleanField(choices=BOOL_CHOICES)
@@ -62,6 +63,7 @@ class ReportsConfig(models.Model):
 	source_table = models.ForeignKey(ReportSources, on_delete=models.CASCADE)
 	show_as_dollar = models.CharField(max_length=20,choices=CURR_CHOICES)
 	value_as_cumulative = models.BooleanField(choices=BOOL_CHOICES)
+	filter_known_tokens = models.BooleanField(choices=BOOL_CHOICES)
 		# renames the instances of the model
 		# with their title name
 	def __str__(self):
