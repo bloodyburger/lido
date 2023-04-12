@@ -97,7 +97,9 @@
                 precision: 0
             },
           area: 'data',
-          runningTotal: 'row',
+          {% if rc.value_as_cumulative %}
+          runningTotal: 'no',
+          {% endif %}
           //allowCrossGroupCalculation: true,
         },
       ],

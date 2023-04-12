@@ -61,6 +61,7 @@ class ReportsConfig(models.Model):
 	column_total = models.BooleanField(choices=BOOL_CHOICES)
 	source_table = models.ForeignKey(ReportSources, on_delete=models.CASCADE)
 	show_as_dollar = models.CharField(max_length=20,choices=CURR_CHOICES)
+	value_as_cumulative = models.BooleanField(choices=BOOL_CHOICES)
 		# renames the instances of the model
 		# with their title name
 	def __str__(self):
