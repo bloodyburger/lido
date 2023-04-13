@@ -14,6 +14,11 @@
 
   </div><div class="col"></div><div class="col"></div></div>
 </div>-->
+<style>
+  .textAlign{
+    text-align:center !important;
+}
+</style>
 <div class="demo-container">
   <h4>{{rc.report.report_name}}</h4>
   <h6>{{rc.report.subheading}}</h6>
@@ -32,6 +37,7 @@
       allowSorting: true,
       allowFiltering: true,
       allowExpandAll: true,
+      width: "70%",
       showBorders: true,
       showRowGrandTotals: {{rc.row_total|lower}},
       showColumnGrandTotals: {{rc.column_total|lower}},
@@ -71,7 +77,9 @@
            if(e.area === "row" && e.cell && e.cell.text === "3. Surplus"){
                 e.cellElement.find(".dx-expand-icon-container").empty();
            }
-       },
+           if (e.area == "data" )  
+                e.cellElement.addClass("align-center");
+            },
        {% endif %}
        /*
        onCellClick: function(e){
@@ -102,9 +110,19 @@
         {% templatetag openbrace %}
           'caption': '{{f}}',
           'dataField': '{{f}}',
-          'width': 150,
+          'width': 200,
           'area': 'row',
-          'expanded': true
+          {% if f == 'PRIMARY_LABEL' %}
+          'expanded': {{rc.expand_primary|lower}}
+          {% elif f == 'SECONDARY_LABEL' %}
+          'expanded': {{rc.expand_secondary|lower}}
+          {% elif f == 'ACCOUNT' %}
+          'expanded': {{rc.expand_account|lower}}
+          {% elif f == 'CATEGORY' %}
+          'expanded': {{rc.expand_category|lower}}
+          {% elif f == 'SUBCATEGORY' %}
+          'expanded': {{rc.expand_subcategory|lower}}
+          {% endif %}
           {% templatetag closebrace %},
         {% endfor %}
          {
@@ -112,9 +130,10 @@
           dataType: 'date',
           area: 'column',
         }, {
-          caption: 'VALUE_BASE_TOKEN',
+          caption: '{{rc.value_col}}',
           dataField: '{{rc.value_col}}',
           dataType: 'number',
+          width: 100,
           summaryType: 'sum',
           //format: 'Number',
           format: {
