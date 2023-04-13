@@ -64,6 +64,7 @@ class ReportsConfig(models.Model):
 	show_as_dollar = models.CharField(max_length=20,choices=CURR_CHOICES)
 	value_as_cumulative = models.BooleanField(choices=BOOL_CHOICES)
 	filter_known_tokens = models.BooleanField(choices=BOOL_CHOICES)
+	fold_primary = models.TextField(blank=True,default=None,null=True)
 		# renames the instances of the model
 		# with their title name
 	def __str__(self):

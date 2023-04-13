@@ -42,6 +42,8 @@
         enabled:true
         },
       onCellClick(e) {
+        if(e.cell.text === "3. Surplus")
+                e.cancel = true;
         if (e.area === 'data') {
           const pivotGridDataSource = e.component.getDataSource();
           const rowPathLength = e.cell.rowPath.length;
@@ -53,6 +55,27 @@
           salesPopup.show();
         }
       },
+      {% if rc.fold_primary|length > 3 %}
+      onContentReady: function(e){
+         
+         if(!e.component.isNotFirstLoad) {
+           e.component.isNotFirstLoad = true;
+           e.component.getDataSource().collapseHeaderItem("row", ["3. Surplus"])
+         
+         }
+       },
+       onCellPrepared: function(e){
+           
+           if(e.area === "row" && e.cell && e.cell.text === "3. Surplus"){
+                e.cellElement.find(".dx-expand-icon-container").empty();
+           }
+       },
+       {% endif %}
+       /*
+       onCellClick: function(e){
+           if(e.cell.text === "3. Surplus")
+                e.cancel = true;
+       },*/
       onExporting: function(e) { 
         var workbook = new ExcelJS.Workbook(); 
         var worksheet = workbook.addWorksheet('Main sheet'); 
