@@ -3,26 +3,12 @@ from django.shortcuts import render
 from .models import Reports, ReportsConfig
 import snowflake.connector
 import json, pandas as pd
+import os
 
 
 def index(request):
-    # return HttpResponse("Hello, world. You're at the polls index.")
-    conn = snowflake.connector.connect(
-        user='READ_ONLY_LIDO',
-        password='9dC8v5y9rQ6XqX',
-        account='rha26240.us-east-1',
-        warehouse='XS',
-        database='user_tb',
-        schema='PUBLIC'
-    )
-    cur = conn.cursor()
-    #cur.execute('select * from LIDO_DEV limit 500')
-    #df = cur.fetch_pandas_all()
-    #df.to_csv('lido_snowflake.csv', header=True)
+
     reports = Reports.objects.all()
-    string = 'a,b'
-    result = ",".join(["'"+x+"'" for x in string.split(",")])
-    print(result)
     return render(request, 'reports/index.html', context={'report_list': reports})
 
 
@@ -68,12 +54,12 @@ def make_query(rc):
                     '0x5a98fcbea516cf06857215779fd812ca3bef1b32':'LDO'}
     
     conn = snowflake.connector.connect(
-        user='READ_ONLY_LIDO',
-        password='9dC8v5y9rQ6XqX',
-        account='rha26240.us-east-1',
-        warehouse='XS',
-        database='user_tb',
-        schema='PUBLIC'
+        user=os.environ.get('SNOWFLAKE_USER'),
+        password=os.environ.get('SNOWFLAKE_PASSWORD'),
+        account=os.environ.get('SNOWFLAKE_ACCOUNT'),
+        warehouse=os.environ.get('SNOWFLAKE_WAREHOUSE'),
+        database=os.environ.get('SNOWFLAKE_DATABASE'),
+        schema=os.environ.get('SNOWFLAKE_SCHEMA')
     )
     cur = conn.cursor()
     query_filters = "WHERE "
