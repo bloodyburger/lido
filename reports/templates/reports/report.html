@@ -28,20 +28,7 @@
 </div>
 
 <script>
-  $('#toggle_m').click(function(e){
-    localStorage.setItem('cf','M');
-    $("#sales")
-            .dxPivotGrid("instance")
-            .getDataSource()
-            .reload();
-  });
-  $('#toggle_k').click(function(e){
-    localStorage.setItem('cf','K');
-    $("#sales")
-            .dxPivotGrid("instance")
-            .getDataSource()
-            .reload();
-  });
+
   const sales_data = {{ final_data|safe }};
   
   $(() => {
