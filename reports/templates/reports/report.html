@@ -22,11 +22,26 @@
 <div class="demo-container">
   <h4>{{rc.report.report_name}}</h4>
   <h6>{{rc.report.subheading}}</h6>
+  <button id="toggle_m">M</button><button id="toggle_k">K</button><button id="toggle_o">Off</button>
   <div id="sales"></div>
   <div id="sales-popup"></div>
 </div>
 
 <script>
+  $('#toggle_m').click(function(e){
+    localStorage.setItem('cf','M');
+    $("#sales")
+            .dxPivotGrid("instance")
+            .getDataSource()
+            .reload();
+  });
+  $('#toggle_k').click(function(e){
+    localStorage.setItem('cf','K');
+    $("#sales")
+            .dxPivotGrid("instance")
+            .getDataSource()
+            .reload();
+  });
   const sales_data = {{ final_data|safe }};
   
   $(() => {
@@ -72,15 +87,22 @@
          
          }
        },
+       {% endif %}
        onCellPrepared: function(e){
-           
+          {% if rc.fold_primary|length > 3 %}
            if(e.area === "row" && e.cell && e.cell.text === "3. Surplus"){
                 e.cellElement.find(".dx-expand-icon-container").empty();
            }
-           if (e.area == "data" )  
+          {% endif %}   
+           //console.log(e);
+           if (e.area == "data" ){
+                //console.log(e);
+                e.cell.value = 1;
+                e.cell.text = 1
                 e.cellElement.addClass("align-center");
-            },
-       {% endif %}
+            }
+          }
+          ,
        /*
        onCellClick: function(e){
            if(e.cell.text === "3. Surplus")
@@ -141,6 +163,18 @@
                 precision: 0
             },
           area: 'data',
+          customizeText: function(cellInfo) {
+                //console.log(cellInfo);
+                df = localStorage.getItem('cf');
+                cv = cellInfo.valueText;
+                console.log(cv);
+                cv = cv.replace(/,/g,'');
+                console.log(cv);
+                if(df == 'M')
+                  return String(parseInt(cv)/1000000);
+                else
+                  return   String(cellInfo.valueText);
+            },
           {% if rc.value_as_cumulative %}
           runningTotal: 'no',
           {% endif %}
