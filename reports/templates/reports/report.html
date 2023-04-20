@@ -22,7 +22,7 @@
 <div class="demo-container">
   <h4>{{rc.report.report_name}}</h4>
   <h6>{{rc.report.subheading}}</h6>
-  <button id="toggle_m">M</button><button id="toggle_k">K</button><button id="toggle_o">Off</button>
+  <div class="clearfix"></div>
   <div id="sales"></div>
   <div id="sales-popup"></div>
 </div>
@@ -163,18 +163,6 @@
                 precision: 0
             },
           area: 'data',
-          customizeText: function(cellInfo) {
-                //console.log(cellInfo);
-                df = localStorage.getItem('cf');
-                cv = cellInfo.valueText;
-                console.log(cv);
-                cv = cv.replace(/,/g,'');
-                console.log(cv);
-                if(df == 'M')
-                  return String(parseInt(cv)/1000000);
-                else
-                  return   String(cellInfo.valueText);
-            },
           {% if rc.value_as_cumulative %}
           runningTotal: 'no',
           {% endif %}
