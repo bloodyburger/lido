@@ -12,26 +12,17 @@
 
 
 ```bash
-git clone https://github.com/Steakhouse-Financial/lido-reports.git
-cd lido-reports
-nano .env
-```
-
-Maintain environment values as below
-```
-SNOWFLAKE_USER=<username>
-SNOWFLAKE_PASSWORD=<password>
-SNOWFLAKE_ACCOUNT=<account>.<region>
-SNOWFLAKE_WAREHOUSE=<XS or L>
-SNOWFLAKE_DATABASE=<database name>
-SNOWFLAKE_SCHEMA=<schema name>
-DJANGO_SECRET=<secret key for django>
-```
-
-Then run 
-```bash
-docker run -d --restart=always -p 8000:8000 -v ./:/lido --name lido bloodyburger/lido
-
+docker run \
+	--name lido \
+	-p 13081:8000 \
+	--network network \
+	-e SNOWFLAKE_USER=user \
+	-e SNOWFLAKE_PASSWORD=password \
+	-e SNOWFLAKE_ACCOUNT=account \
+	-e SNOWFLAKE_WAREHOUSE=<XL,X-Small> \
+	-e SNOWFLAKE_DATABASE=database \
+	-e SNOWFLAKE_SCHEMA=schema \
+	 bloodyburger/lido:latest
 ```
 Lido reports is now running on http://localhost:8000
 
