@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['lido.teej.xyz','localhost']
+ALLOWED_HOSTS = ['lido.teej.xyz','localhost','0.0.0.0']
 CSRF_TRUSTED_ORIGINS = ['https://lido.teej.xyz']
 
 # Application definition
