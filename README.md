@@ -14,7 +14,24 @@
 ```bash
 git clone https://github.com/Steakhouse-Financial/lido-reports.git
 cd lido-reports
-docker run -d --restart=always -p 8000:8000 -v ./:/lido --name lido louislam/uptime-kuma:1
+nano .env
+```
+
+Maintain environment values as below
+```
+SNOWFLAKE_USER=<username>
+SNOWFLAKE_PASSWORD=<password>
+SNOWFLAKE_ACCOUNT=<account>.<region>
+SNOWFLAKE_WAREHOUSE=<XS or L>
+SNOWFLAKE_DATABASE=<database name>
+SNOWFLAKE_SCHEMA=<schema name>
+DJANGO_SECRET=<secret key for django>
+```
+
+Then run 
+```bash
+docker run -d --restart=always -p 8000:8000 -v ./:/lido --name lido bloodyburger/lido
+
 ```
 Lido reports is now running on http://localhost:8000
 
@@ -22,6 +39,12 @@ Lido reports is now running on http://localhost:8000
 ```bash
 git clone https://github.com/Steakhouse-Financial/lido-reports.git
 cd lido-reports
+nano .env
+```
+
+Maintain environment variables as described above and 
+
+```bash
 docker-compose up -d
 ```
 Lido reports is now running on http://localhost:8000
