@@ -11,7 +11,7 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 COPY . /lido
 RUN pip install -r requirements.txt
-
+COPY .env /lido
 #COPY . /lido
 
 EXPOSE 8000
