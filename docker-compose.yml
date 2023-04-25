@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+    python:
+        image: python:3.9
+        container_name: lido
+        volumes:
+            - ./lido:/lido
+        ports:
+            - 13013:8000
+        command: bash -c "cd ./lido && pip install django && pip install pandas && pip install snowflake-connector-python && pip install "snowflake-connector-python[pandas]" && python manage.py migrate && python manage.py runserver 0.0.0.0:8000">
+
+networks:
+  default:
+    external:
+      name: charkoal
