@@ -30,7 +30,7 @@ Lido reports is now running on http://localhost:8000
 ```bash
 git clone https://github.com/Steakhouse-Financial/lido-reports.git
 cd lido-reports
-nano .env
+nano config.env
 ```
 
 Maintain environment variables as described above and 
