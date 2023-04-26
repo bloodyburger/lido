@@ -123,22 +123,7 @@ def make_query(rc):
                 ["ETH", "DAI", "MATIC", "USDC", "USDT", "SOL", "LDO"]
             )
         ]
-    # unused
-    if len(rc.fold_primary) > 3:
-        print("Folding data for {}".format(rc.fold_primary))
-        print(rc.fold_primary.split(","))
-        df_fold = df
-        # exclude data to be folded
-        # df = df[~df['PRIMARY_LABEL'].isin(rc.fold_primary.split(","))]
-        # include only data to be folded
-        df_fold = df_fold[df_fold["PRIMARY_LABEL"].isin(rc.fold_primary.split(","))]
-        df_fold2 = (
-            df_fold.groupby(["PERIOD", "PRIMARY_LABEL"])
-            .agg({"VALUE_ETH": "sum"})
-            .reset_index()
-        )
-        # df = pd.concat([df,df_fold2])
-        # df_fold2.to_csv('fold.csv', header=True)
+
     df.to_csv("lido.csv", header=True)
     return df.to_json(orient="records")
 
