@@ -70,6 +70,7 @@ class ReportsConfig(models.Model):
 	expand_account = models.BooleanField(choices=BOOL_CHOICES)
 	expand_category = models.BooleanField(choices=BOOL_CHOICES)
 	expand_subcategory = models.BooleanField(choices=BOOL_CHOICES)
+	drilldown_cols = models.TextField()
 		# renames the instances of the model
 		# with their title name
 	def __str__(self):
