@@ -58,10 +58,13 @@ def generate_report(request, report_id):
     if rc.show_token == "YES":
         field_list.append("TOKEN_SYMBOL")
 
+    drilldown_cols = ",".join(["'" + x.strip() + "'" for x in rc.drilldown_cols.split(",")])  
+    print("Drilldown cols are {}".format(drilldown_cols))  
+
     return render(
         request,
         "reports/report.html",
-        context={"field_list": field_list, "final_data": make_query(rc), "rc": rc},
+        context={"field_list": field_list, "final_data": make_query(rc), "rc": rc, "drilldown_cols":drilldown_cols},
     )
 
 

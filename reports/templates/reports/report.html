@@ -20,7 +20,7 @@
 <script>
 
   const sales_data = {{ final_data|safe }};
-  
+
   $(() => {
     let drillDownDataSource = {};
     //console.log(sales_data);
@@ -182,7 +182,7 @@
                 });
                 e.cancel = true;
               },
-            columns: ['PERIOD', 'PRIMARY_LABEL', 'SECONDARY_LABEL', 'ACCOUNT','BASE_TOKEN_ADDRESS','VALUE_BASE_TOKEN','TOKEN_PRICE','VALUE_ETH','VALUE_USD','LAG_PRICE_USD','LAG_PRICE_ETH'],
+            columns: [{{drilldown_cols|safe}}],
           })
           .appendTo(contentElement);
       },
