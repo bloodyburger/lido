@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+    python:
+        image: bloodyburger/lido:latest
+        container_name: lido
+        volumes:
+            - ./db.sqlite3:/lido/db.sqlite3
+        env_file:
+            - ./config.env    
+        ports:
+            - 13013:8000
+
+networks:
+  default:
+    external:
+      name: charkoal
