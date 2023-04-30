@@ -55,7 +55,7 @@ python manage.py createsuperuser
 ### Report configuration
 The configuration data is stored on sqlite database and when you bind mount local path, the database file is saved on your local machine. If you do not mount local volume, the configurations will be lost and you have to redo all over again. There are three models created on the backend for storing the configurations. 
 
-Login to admin panel using http://localhost:8000/admin with the username/paswsword created in above step.
+Login to admin panel using http://localhost:8000/admin with the username/password created in above step.
 
 - Step 1 , Navigate to Reports model and maintain report name and it's description.
 - Step-2, Navigate to Reports sources and maintain the source table name from where you want to pull the information. You can have multiple entries created and choose the appropriate one during the configuration on next step.
