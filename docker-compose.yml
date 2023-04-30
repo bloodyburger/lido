@@ -5,13 +5,8 @@ services:
         image: bloodyburger/lido:latest
         container_name: lido
         volumes:
-            - ./db.sqlite3:/lido/db.sqlite3
+            - ./src:/lido
         env_file:
             - ./config.env    
         ports:
-            - 13013:8000
-
-networks:
-  default:
-    external:
-      name: charkoal
+            - 8000:8000
