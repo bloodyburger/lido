@@ -5,7 +5,7 @@ services:
         image: bloodyburger/lido:latest
         container_name: lido
         volumes:
-            - ./src:/lido
+            - ./db:/lido/db
         env_file:
             - ./config.env    
         ports:
