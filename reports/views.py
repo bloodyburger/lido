@@ -81,10 +81,10 @@ def make_query(rc):
     token_symbol = {
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": "ETH",
         "0x6b175474e89094c44da98b954eedeac495271d0f": "DAI",
-        "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": "MATIC",
+        "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": "MATIC1",
         "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": "USDC",
         "0xdac17f958d2ee523a2206206994597c13d831ec7": "USDT",
-        "7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj": "SOL",
+        "7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj": "SOL1",
         "0x5a98fcbea516cf06857215779fd812ca3bef1b32": "LDO",
     }
     # connect to Snowflake
