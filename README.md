@@ -14,8 +14,7 @@
 ```bash
 docker run \
 	--name lido \
-	-p 13081:8000 \
-	--network network \
+	-p 8000:8000 \
 	-e SNOWFLAKE_USER=user \
 	-e SNOWFLAKE_PASSWORD=password \
 	-e SNOWFLAKE_ACCOUNT=account \
@@ -28,16 +27,45 @@ Lido reports is now running on http://localhost:8000
 
 ### 🐳 Docker-Compose
 ```bash
-git clone https://github.com/Steakhouse-Financial/lido-reports.git
-cd lido-reports
-nano config.env
+mkdir /opt/lido
+cd /opt/lido
+nano docker-compose.yml
 ```
 
+Create docker-compose.yml with below contents
+```
+version: '3'
+
+services:
+    python:
+        image: bloodyburger/lido:latest
+        container_name: lido
+        volumes:
+            - ./db:/lido/db
+        env_file:
+            - ./config.env    
+        ports:
+            - 8000:8000
+```
 Maintain environment variables as described above and 
 
 ```bash
 docker-compose up -d
 ```
+
+Wait until you see the message on the logs
+```
+lido  | Django version 4.1.7, using settings 'lido.settings'
+lido  | Starting development server at http://0.0.0.0:8000/
+lido  | Quit the server with CONTROL-C.
+```
+
+Now run the migrations using
+```
+docker exec -it lido python manage.py migrate
+```
+
+
 Lido reports is now running on http://localhost:8000
 
 You can check the docker logs by using
@@ -48,7 +76,7 @@ docker logs lido
 ### :bust_in_silhouette: Creating admin user
 ```bash
 docker exec -it lido bash
-cd lido
+cd /lido
 python manage.py createsuperuser
 ```
 
