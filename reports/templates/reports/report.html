@@ -29,7 +29,7 @@
       allowSorting: true,
       allowFiltering: true,
       allowExpandAll: true,
-      width: "70%",
+      //width: "70%",
       showBorders: true,
       showRowGrandTotals: {{rc.row_total|lower}},
       showColumnGrandTotals: {{rc.column_total|lower}},
@@ -142,8 +142,9 @@
           area: 'data',
           {% if rc.value_as_cumulative %}
           runningTotal: 'no',
+          allowCrossGroupCalculation: true,
           {% endif %}
-          //allowCrossGroupCalculation: true,
+          
         },
       ],
         store: sales_data,
