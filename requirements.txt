@@ -62,6 +62,7 @@ regex==2023.3.23
 requests==2.28.2
 rlp==3.0.0
 six==1.16.0
+psycopg2
 snowflake-connector-python
 snowflake-connector-python[pandas]
 sqlparse==0.4.3
