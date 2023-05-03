@@ -5,6 +5,7 @@ import snowflake.connector
 import json
 import pandas as pd
 import os
+import psycopg2
 
 def index(request):
     """ main function that the home page
@@ -88,14 +89,19 @@ def make_query(rc):
         "0x5a98fcbea516cf06857215779fd812ca3bef1b32": "LDO",
     }
     # connect to Snowflake
-    conn = snowflake.connector.connect(
-        user=os.environ.get("SNOWFLAKE_USER"),
-        password=os.environ.get("SNOWFLAKE_PASSWORD"),
-        account=os.environ.get("SNOWFLAKE_ACCOUNT"),
-        warehouse=os.environ.get("SNOWFLAKE_WAREHOUSE"),
-        database=os.environ.get("SNOWFLAKE_DATABASE"),
-        schema=os.environ.get("SNOWFLAKE_SCHEMA"),
-    )
+    #conn = snowflake.connector.connect(
+    ##    user=os.environ.get("SNOWFLAKE_USER"),
+    #    password=os.environ.get("SNOWFLAKE_PASSWORD"),
+    #    account=os.environ.get("SNOWFLAKE_ACCOUNT"),
+    #    warehouse=os.environ.get("SNOWFLAKE_WAREHOUSE"),
+    #    database=os.environ.get("SNOWFLAKE_DATABASE"),
+    #    schema=os.environ.get("SNOWFLAKE_SCHEMA"),
+    #)
+    conn = psycopg2.connect(database = os.environ.get("PG_DATABASE"), 
+                        user = os.environ.get("PG_USER"), 
+                        host= os.environ.get("PG_HOST"),
+                        password = os.environ.get("PG_PASSWORD"),
+                        port = os.environ.get("PG_PORT"))
     cur = conn.cursor()
     # Build the query dynamically
     query_filters = "WHERE "
@@ -117,7 +123,13 @@ def make_query(rc):
     print("Query string is {}".format(query_string))
     # fire the query on Snowflake
     cur.execute(query_string)
-    df = cur.fetch_pandas_all()
+    # fetch all rows and convert to a DataFrame
+    df = pd.DataFrame(cur.fetchall(), columns=[desc[0] for desc in cur.description])
+    df.columns = map(lambda x: str(x).upper(), df.columns)
+    # close the cursor and connection
+    cur.close()
+    conn.close()
+    #df = cur.fetch_pandas_all()
     # filter toekns if configured
     df["TOKEN_SYMBOL"] = df["BASE_TOKEN_ADDRESS"].map(token_symbol)
     if rc.filter_known_tokens:
@@ -127,6 +139,6 @@ def make_query(rc):
             )
         ]
 
-    df.to_csv("lido.csv", header=True)
+    #df.to_csv("lido.csv", header=True)
     return df.to_json(orient="records")
 
