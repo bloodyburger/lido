@@ -139,6 +139,6 @@ def make_query(rc):
             )
         ]
 
-    df.to_csv("lido.csv", header=True)
+    #df.to_csv("lido.csv", header=True)
     return df.to_json(orient="records")
 
