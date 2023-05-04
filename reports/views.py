@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from .models import Reports, ReportsConfig
 import snowflake.connector
-import json
+import json, time
 import pandas as pd
 import os
 import psycopg2
@@ -36,6 +36,7 @@ def generate_report(request, report_id):
         HttpRequest: render report view with parameters
     """    
     print("Selected Report id is {}".format(report_id))
+    start = time.process_time()
     try:
         rc = ReportsConfig.objects.get(report_id=report_id)
     except ReportsConfig.DoesNotExist:
@@ -61,7 +62,7 @@ def generate_report(request, report_id):
 
     drilldown_cols = ",".join(["'" + x.strip() + "'" for x in rc.drilldown_cols.split(",")])  
     print("Drilldown cols are {}".format(drilldown_cols))  
-
+    print("Time to render the view is {}".format(time.process_time() - start))
     return render(
         request,
         "reports/report.html",
@@ -122,10 +123,12 @@ def make_query(rc):
     query_string = "select * from {} {} ".format(rc.source_table, query_filters)
     print("Query string is {}".format(query_string))
     # fire the query on Snowflake
+    start = time.process_time()
     cur.execute(query_string)
     # fetch all rows and convert to a DataFrame
     df = pd.DataFrame(cur.fetchall(), columns=[desc[0] for desc in cur.description])
     df.columns = map(lambda x: str(x).upper(), df.columns)
+    print("Runtime for data extraction from DB is {}".format(time.process_time() - start))
     # close the cursor and connection
     cur.close()
     conn.close()
@@ -139,6 +142,6 @@ def make_query(rc):
             )
         ]
 
-    #df.to_csv("lido.csv", header=True)
+    df.to_csv("lido.csv", header=True)
     return df.to_json(orient="records")
 
