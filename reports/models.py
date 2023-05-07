@@ -79,3 +79,16 @@ class ReportsConfig(models.Model):
 	class Meta:
 		db_table = "reports_config"
 		verbose_name_plural = "Report Config"
+
+class Uploads(models.Model):
+		# fields of the model
+	document = models.FileField(upload_to='documents/')
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+		# renames the instances of the model
+		# with their title name
+	def __str__(self):
+		return self.created_at
+	
+	class Meta:
+		verbose_name_plural = "File Uploads"
