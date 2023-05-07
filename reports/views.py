@@ -6,6 +6,13 @@ import json, time
 import pandas as pd
 import os
 import psycopg2
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView
+from .models import Uploads
+from .forms import UploadForm
+from django.http import HttpResponseRedirect
+from .utils import process_postgresql
+
 
 def index(request):
     """ main function that the home page
@@ -142,7 +149,20 @@ def make_query(rc):
             )
         ]
 
-    df.to_csv("lido.csv", header=True)
-    df.to_json('data.json',orient="records")
+    #df.to_csv("lido.csv", header=True)
+    #df.to_json('data.json',orient="records")
     return df.to_json(orient="records")
 
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadForm(request.POST, request.FILES)
+        upload_file = request.FILES['document']
+        if form.is_valid():
+            df = pd.read_csv(upload_file)
+            process_postgresql(df)
+            print(df.columns)
+            form.save()
+            return HttpResponseRedirect("/") 
+    else:
+        form = UploadForm
+    return render(request, 'reports/upload.html', {'form':form})
