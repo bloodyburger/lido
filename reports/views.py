@@ -11,7 +11,7 @@ from django.views.generic.edit import CreateView
 from .models import Uploads
 from .forms import UploadForm
 from django.http import HttpResponseRedirect
-from .utils import process_postgresql
+from .utils import process_postgresql, send_email
 
 
 def index(request):
@@ -162,6 +162,7 @@ def upload_file(request):
             process_postgresql(df)
             print(df.columns)
             form.save()
+            send_email("File upload to pgsql","Data loaded from File to Postgresql successful")
             return HttpResponseRedirect("/") 
     else:
         form = UploadForm
