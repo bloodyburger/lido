@@ -126,6 +126,7 @@ def upsert_to_postgresql(data_frame, table_name, schema=None, match_columns=None
         )
 
         with engine.begin() as conn:
+            conn.exec_driver_sql(f"TRUNCATE TABLE {table_spec}")
             conn.exec_driver_sql("DROP TABLE IF EXISTS temp_table")
             conn.exec_driver_sql(
                 f"CREATE TEMPORARY TABLE temp_table AS SELECT * FROM {table_spec} WHERE false"
@@ -142,7 +143,7 @@ def hash_row(row):
     hash_obj = hashlib.sha256(row_str.encode())
     return hash_obj.hexdigest()        
 
-def send_email(subject, body, recipients):
+def send_email(subject, body, recipients=["hi@charkoal.xyz", "a@smolco.xyz"]):
     # Send email via gmail SMTP
     msg = MIMEText(body)
     msg['Subject'] = subject
@@ -195,9 +196,7 @@ def process_postgresql(df_dune_Data):
     df_dune_Data.columns = map(lambda x: str(x).lower(), df_dune_Data.columns)
     # Include hash column
     df_dune_Data['hash_key'] = df_dune_Data['period'].astype(str) + df_dune_Data['primary_label'].astype(str) + df_dune_Data['secondary_label'].astype(str) + df_dune_Data['account'].astype(str) + df_dune_Data['category'].astype(str) + df_dune_Data['subcategory'].astype(str) + \
-        df_dune_Data['base_token_address'].astype(str) + df_dune_Data['value_base_token'].astype(str) + df_dune_Data['value_usd'].astype(str) + \
-        df_dune_Data['token_price'].astype(str) + \
-        df_dune_Data['qty_usd'].astype(str) + df_dune_Data['hash'].astype(str)
+        df_dune_Data['base_token_address'].astype(str) + df_dune_Data['hash'].astype(str)
     
     df_dune_Data['hash_key'] = df_dune_Data['hash_key'].apply(
                 lambda x: md5(x.encode("utf8")).hexdigest())

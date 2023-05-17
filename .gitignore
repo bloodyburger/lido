@@ -6,6 +6,7 @@ __pycache__
 db.sqlite3
 media
 *.csv
+documents/*
 # Backup files # 
 *.bak 
 *.json
