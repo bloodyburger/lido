@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-from django.shortcuts import render
 from .models import Reports, ReportsConfig
 import snowflake.connector
 import json, time
@@ -12,6 +11,10 @@ from .models import Uploads
 from .forms import UploadForm
 from django.http import HttpResponseRedirect
 from .utils import process_postgresql, send_email
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 
 
 def index(request):
@@ -153,6 +156,7 @@ def make_query(rc):
     #df.to_json('data.json',orient="records")
     return df.to_json(orient="records")
 
+@login_required
 def upload_file(request):
     if request.method == 'POST':
         form = UploadForm(request.POST, request.FILES)
@@ -167,3 +171,22 @@ def upload_file(request):
     else:
         form = UploadForm
     return render(request, 'reports/upload.html', {'form':form})
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('upload')
+    else:
+        form = AuthenticationForm(request)
+    
+    return render(request, 'reports/login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
