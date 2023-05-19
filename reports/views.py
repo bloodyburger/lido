@@ -18,20 +18,20 @@ from django.shortcuts import render, redirect
 
 
 def index(request):
-    """ main function that the home page
+    """main function that the home page
 
     Args:
         request (HttpRequest): incoming HTTP request
 
     Returns:
         HttpRequest: returns view that renders home page
-    """    
+    """
     reports = Reports.objects.all()
     return render(request, "reports/index.html", context={"report_list": reports})
 
 
 def generate_report(request, report_id):
-    """ this function is responsible for reading the reports config
+    """this function is responsible for reading the reports config
         and render the final template with parameters
 
     Args:
@@ -44,7 +44,7 @@ def generate_report(request, report_id):
 
     Returns:
         HttpRequest: render report view with parameters
-    """    
+    """
     print("Selected Report id is {}".format(report_id))
     start = time.process_time()
     try:
@@ -70,25 +70,32 @@ def generate_report(request, report_id):
     if rc.show_token == "YES":
         field_list.append("TOKEN_SYMBOL")
 
-    drilldown_cols = ",".join(["'" + x.strip() + "'" for x in rc.drilldown_cols.split(",")])  
-    print("Drilldown cols are {}".format(drilldown_cols))  
+    drilldown_cols = ",".join(
+        ["'" + x.strip() + "'" for x in rc.drilldown_cols.split(",")]
+    )
+    print("Drilldown cols are {}".format(drilldown_cols))
     print("Time to render the view is {}".format(time.process_time() - start))
     return render(
         request,
         "reports/report.html",
-        context={"field_list": field_list, "final_data": make_query(rc), "rc": rc, "drilldown_cols":drilldown_cols},
+        context={
+            "field_list": field_list,
+            "final_data": make_query(rc),
+            "rc": rc,
+            "drilldown_cols": drilldown_cols,
+        },
     )
 
 
 def make_query(rc):
-    """ method that build the query dynamically based on config
+    """method that build the query dynamically based on config
 
     Args:
         rc (QuerySet): Query result of config for selected report
 
     Returns:
         dataframe: dataframe of all values to be displayed on the report
-    """    
+    """
     # translate token hash code to token string
     token_symbol = {
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": "ETH",
@@ -100,19 +107,21 @@ def make_query(rc):
         "0x5a98fcbea516cf06857215779fd812ca3bef1b32": "LDO",
     }
     # connect to Snowflake
-    #conn = snowflake.connector.connect(
+    # conn = snowflake.connector.connect(
     ##    user=os.environ.get("SNOWFLAKE_USER"),
     #    password=os.environ.get("SNOWFLAKE_PASSWORD"),
     #    account=os.environ.get("SNOWFLAKE_ACCOUNT"),
     #    warehouse=os.environ.get("SNOWFLAKE_WAREHOUSE"),
     #    database=os.environ.get("SNOWFLAKE_DATABASE"),
     #    schema=os.environ.get("SNOWFLAKE_SCHEMA"),
-    #)
-    conn = psycopg2.connect(database = os.environ.get("PG_DATABASE"), 
-                        user = os.environ.get("PG_USER"), 
-                        host= os.environ.get("PG_HOST"),
-                        password = os.environ.get("PG_PASSWORD"),
-                        port = os.environ.get("PG_PORT"))
+    # )
+    conn = psycopg2.connect(
+        database=os.environ.get("PG_DATABASE"),
+        user=os.environ.get("PG_USER"),
+        host=os.environ.get("PG_HOST"),
+        password=os.environ.get("PG_PASSWORD"),
+        port=os.environ.get("PG_PORT"),
+    )
     cur = conn.cursor()
     # Build the query dynamically
     query_filters = "WHERE "
@@ -138,11 +147,13 @@ def make_query(rc):
     # fetch all rows and convert to a DataFrame
     df = pd.DataFrame(cur.fetchall(), columns=[desc[0] for desc in cur.description])
     df.columns = map(lambda x: str(x).upper(), df.columns)
-    print("Runtime for data extraction from DB is {}".format(time.process_time() - start))
+    print(
+        "Runtime for data extraction from DB is {}".format(time.process_time() - start)
+    )
     # close the cursor and connection
     cur.close()
     conn.close()
-    #df = cur.fetch_pandas_all()
+    # df = cur.fetch_pandas_all()
     # filter toekns if configured
     df["TOKEN_SYMBOL"] = df["BASE_TOKEN_ADDRESS"].map(token_symbol)
     if rc.filter_known_tokens:
@@ -152,41 +163,46 @@ def make_query(rc):
             )
         ]
 
-    #df.to_csv("lido.csv", header=True)
-    #df.to_json('data.json',orient="records")
+    # df.to_csv("lido.csv", header=True)
+    # df.to_json('data.json',orient="records")
     return df.to_json(orient="records")
+
 
 @login_required
 def upload_file(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = UploadForm(request.POST, request.FILES)
-        upload_file = request.FILES['document']
+        upload_file = request.FILES["document"]
         if form.is_valid():
             df = pd.read_csv(upload_file)
             process_postgresql(df)
             print(df.columns)
             form.save()
-            send_email("File upload to pgsql","Data loaded from File to Postgresql successful")
-            return HttpResponseRedirect("/") 
+            send_email(
+                "File upload to pgsql", "Data loaded from File to Postgresql successful"
+            )
+            return HttpResponseRedirect("/")
     else:
         form = UploadForm
-    return render(request, 'reports/upload.html', {'form':form})
+    return render(request, "reports/upload.html", {"form": form})
+
 
 def login_view(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('upload')
+                return redirect("upload")
     else:
         form = AuthenticationForm(request)
-    
-    return render(request, 'reports/login.html', {'form': form})
+
+    return render(request, "reports/login.html", {"form": form})
+
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect("login")
